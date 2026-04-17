@@ -1,6 +1,5 @@
 """
 上期所全品种期权历史隐含波动率自动更新脚本
-并行拉取多品种，加速初始全量更新
 """
 
 import akshare as ak
@@ -8,7 +7,6 @@ import pandas as pd
 from datetime import date, timedelta
 import time
 import os
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # ── 品种配置 ───────────────────────────────────────────────────────
 SYMBOLS = {
@@ -24,8 +22,7 @@ SYMBOLS = {
     "燃料油期权":  ("data/fuel_iv.xlsx",     date(2025,  9, 10)),
 }
 
-SLEEP_SEC    = 0.3   # 缩短请求间隔
-MAX_WORKERS  = 4     # 同时并行跑几个品种（避免过多并发被封）
+SLEEP_SEC = 0.3
 # ─────────────────────────────────────────────────────────────────
 
 
@@ -39,24 +36,33 @@ def get_weekdays(start: date, end: date) -> list[str]:
 
 
 def load_existing(path: str) -> pd.DataFrame:
+    print(f"  >> 检查文件: {path}")
+    print(f"  >> 工作目录: {os.getcwd()}")
+
     if not os.path.exists(path):
-        print(f"    文件不存在: {path}")
+        data_dir = os.path.dirname(path)
+        if os.path.exists(data_dir):
+            print(f"  >> 文件不存在，{data_dir}/ 内容: {os.listdir(data_dir)}")
+        else:
+            print(f"  >> 文件不存在，{data_dir}/ 目录也不存在")
         return pd.DataFrame()
+
+    print(f"  >> 文件存在，大小: {os.path.getsize(path)} 字节")
+
     try:
         df = pd.read_excel(path, dtype=str)
-        print(f"    文件读取成功，共 {len(df)} 行，列名: {df.columns.tolist()}")
+        print(f"  >> 读取成功: {len(df)} 行，列名: {df.columns.tolist()}")
         if df.empty:
-            print(f"    文件为空")
             return pd.DataFrame()
         if "交易日期" not in df.columns:
-            print(f"    未找到「交易日期」列，实际列名: {df.columns.tolist()}")
+            print(f"  >> 找不到交易日期列！")
             return pd.DataFrame()
         df["交易日期"] = pd.to_datetime(df["交易日期"], errors='coerce').dt.strftime("%Y-%m-%d")
         df = df.dropna(subset=["交易日期"])
-        print(f"    有效数据: {len(df)} 条，最新日期: {df['交易日期'].max()}")
+        print(f"  >> 有效数据: {len(df)} 条，最新日期: {df['交易日期'].max()}")
         return df
     except Exception as e:
-        print(f"    读取失败: {e}")
+        print(f"  >> 读取异常: {e}")
         return pd.DataFrame()
 
 
@@ -66,8 +72,8 @@ def fetch_one(symbol: str, trade_date: str) -> pd.DataFrame | None:
         if df is not None and not df.empty:
             df.insert(0, "交易日期", trade_date)
             return df
-    except Exception as e:
-        pass  # 静默跳过，减少输出噪音
+    except Exception:
+        pass
     return None
 
 
@@ -82,8 +88,10 @@ def process_iv(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def update_symbol(symbol: str, output_path: str, list_date: date) -> str:
-    """更新单个品种，返回结果摘要字符串"""
+def update_symbol(symbol: str, output_path: str, list_date: date):
+    print(f"\n{'='*50}")
+    print(f"品种: {symbol}  →  {output_path}")
+
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     existing = load_existing(output_path)
 
@@ -91,29 +99,36 @@ def update_symbol(symbol: str, output_path: str, list_date: date) -> str:
         try:
             last_date = pd.to_datetime(existing["交易日期"]).max().date()
             start = last_date + timedelta(days=1)
-            print(f"已有数据至 {last_date}，从 {start} 开始补充")
-        except:
+            print(f"  已有数据至 {last_date}，从 {start} 开始补充")
+        except Exception as e:
             start = list_date
-            print(f"日期解析失败，从上市日 {start} 开始")
+            print(f"  日期解析失败({e})，从上市日开始")
     else:
         start = list_date
-        print(f"无历史数据，从上市日 {start} 开始全量拉取")
+        print(f"  无历史数据，从上市日 {start} 开始全量拉取")
 
     end = date.today()
     if start > end:
-        return f"{symbol}: 已是最新，跳过"
+        print(f"  已是最新，跳过")
+        return
 
     trade_dates = get_weekdays(start, end)
+    print(f"  待拉取交易日: {len(trade_dates)} 个")
 
     new_records = []
-    for td in trade_dates:
+    for i, td in enumerate(trade_dates, 1):
+        print(f"  [{i:>4}/{len(trade_dates)}] {td} ...", end=" ", flush=True)
         df = fetch_one(symbol, td)
         if df is not None:
             new_records.append(df)
+            print(f"OK ({len(df)} 条)")
+        else:
+            print("无数据")
         time.sleep(SLEEP_SEC)
 
     if not new_records:
-        return f"{symbol}: 无新数据"
+        print(f"  本次无新数据")
+        return
 
     new_df = pd.concat(new_records, ignore_index=True)
     new_df["交易日期"] = pd.to_datetime(
@@ -129,30 +144,18 @@ def update_symbol(symbol: str, output_path: str, list_date: date) -> str:
         combined = new_df
 
     combined.to_excel(output_path, index=False)
-    return f"{symbol}: 新增 {len(new_df)} 条，共 {len(combined)} 条 → {output_path}"
+    print(f"  已保存 {len(combined)} 条 → {output_path}")
 
 
 def main():
-    print(f"开始更新，并行数: {MAX_WORKERS}，请求间隔: {SLEEP_SEC}s")
-    print(f"品种数: {len(SYMBOLS)}")
-    print("=" * 50)
+    print(f"工作目录: {os.getcwd()}")
+    print(f"根目录内容: {os.listdir('.')}")
+    print(f"开始更新，请求间隔: {SLEEP_SEC}s，品种数: {len(SYMBOLS)}")
 
-    tasks = [(sym, path, ld) for sym, (path, ld) in SYMBOLS.items()]
+    for sym, (path, ld) in SYMBOLS.items():
+        update_symbol(sym, path, ld)
 
-    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        futures = {
-            executor.submit(update_symbol, sym, path, ld): sym
-            for sym, path, ld in tasks
-        }
-        for future in as_completed(futures):
-            sym = futures[future]
-            try:
-                result = future.result()
-                print(result)
-            except Exception as e:
-                print(f"{sym}: 失败 - {e}")
-
-    print("=" * 50)
+    print(f"\n{'='*50}")
     print("全部品种更新完成！")
 
 

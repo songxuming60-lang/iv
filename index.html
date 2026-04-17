@@ -29,12 +29,7 @@ header{border-bottom:.5px solid var(--border);padding:0 2rem;height:52px;display
 
 main{max-width:1200px;margin:0 auto;padding:1.5rem}
 
-/* Share bar */
-.share-bar{display:flex;align-items:center;gap:10px;background:var(--bg2);border:.5px solid var(--border2);border-radius:8px;padding:10px 14px;margin-bottom:1.25rem}
-.share-lbl{font-size:12px;color:var(--muted);white-space:nowrap}
-.share-url{flex:1;font-family:var(--mono);font-size:12px;color:var(--accent);background:transparent;border:none;outline:none;min-width:0;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
-.copied{font-size:12px;color:var(--accent2);white-space:nowrap;opacity:0;transition:opacity .3s}
-.copied.show{opacity:1}
+
 
 /* Navigation */
 .nav-section{background:var(--bg2);border:.5px solid var(--border);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.25rem}
@@ -123,19 +118,7 @@ main{max-width:1200px;margin:0 auto;padding:1.5rem}
 </header>
 
 <main>
-  <div id="sb" class="share-bar" style="display:none">
-    <span class="share-lbl">分享链接</span>
-    <input class="share-url" id="su" readonly placeholder="点击左侧按钮生成…">
-    <button class="btn ok" id="gen-btn" onclick="generateShareLink()">
-      <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M8 2v8M5 5l3-3 3 3M3 11v2h10v-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>生成分享链接
-    </button>
-    <button class="btn" id="copy-btn" onclick="copyLink()" style="display:none">
-      <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M11 5V3.5A1.5 1.5 0 009.5 2h-6A1.5 1.5 0 002 3.5v6A1.5 1.5 0 003.5 11H5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>复制
-    </button>
-    <span class="copied" id="ct">已复制 ✓</span>
-  </div>
-
-  <!-- Loading state -->
+<!-- Loading state -->
   <div id="loading-state">
     <div class="spin"></div>
     <p>正在加载数据…</p>
@@ -233,7 +216,6 @@ main{max-width:1200px;margin:0 auto;padding:1.5rem}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
 <script>
 const COLORS=['#4f9eff','#3dd68c','#f5a623','#ff5c5c','#c77dff','#ff9f43','#26d7e8','#fd79a8'];
 
@@ -268,40 +250,6 @@ DATA_FILES.forEach((f,i)=>{
 let allData=[],chart=null,chartType='line',viewMode='dominant',activeSeries=new Set();
 let dateFrom='',dateTo='';
 let curExchange='上期所',curCategory='金属',curProd='';
-
-// ── Share ──────────────────────────────────────────────────────────
-function enc(d){try{return LZString.compressToBase64(JSON.stringify(d));}catch(e){return null;}}
-function dec(s){try{return JSON.parse(LZString.decompressFromBase64(s));}catch(e){return null;}}
-
-async function generateShareLink(){
-  if(!allData.length)return;
-  const btn=document.getElementById('gen-btn');
-  btn.disabled=true;btn.textContent='上传中…';
-  try{
-    const compressed=enc(allData);
-    if(!compressed)throw new Error('压缩失败');
-    const res=await fetch('/api/store',{method:'POST',headers:{'Content-Type':'text/plain'},body:compressed});
-    if(!res.ok)throw new Error('HTTP '+res.status);
-    const {id}=await res.json();
-    const url=location.origin+location.pathname+'#s='+id;
-    document.getElementById('su').value=url;
-    history.replaceState(null,'','#s='+id);
-    document.getElementById('copy-btn').style.display='inline-flex';
-    btn.innerHTML='<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8l3 3 7-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>已生成';
-    btn.disabled=false;
-  }catch(e){
-    btn.disabled=false;
-    btn.innerHTML='生成分享链接';
-    alert('生成失败：'+e.message);
-  }
-}
-function copyLink(){
-  const input=document.getElementById('su');
-  const tip=()=>{const t=document.getElementById('ct');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);};
-  if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(input.value).then(tip).catch(()=>fbCopy(input,tip));
-  else fbCopy(input,tip);
-}
-function fbCopy(input,cb){input.select();input.setSelectionRange(0,99999);try{document.execCommand('copy');cb();}catch(e){alert('请手动复制：\n'+input.value);}window.getSelection&&window.getSelection().removeAllRanges();}
 
 // ── Excel helpers ──────────────────────────────────────────────────
 function xlDate(v){
@@ -370,7 +318,7 @@ async function autoLoadFromGitHub(){
     document.getElementById('loading-state').style.display='none';
     document.getElementById('app').style.display='block';
     document.getElementById('ds').textContent=allData.length.toLocaleString()+' 条记录';
-    document.getElementById('sb').style.display='flex';
+    
     status.textContent=`已加载 ${loaded} 个品种`;
     setTimeout(()=>{status.style.display='none';},2000);
     initNav();
@@ -628,30 +576,6 @@ document.getElementById('date-to').addEventListener('change',e=>{
 // ── Entry point ────────────────────────────────────────────────────
 window.addEventListener('load', async () => {
   const hash = location.hash;
-  if (hash.startsWith('#s=')) {
-    const id = hash.slice(3);
-    try {
-      const res = await fetch('/api/store?id=' + id);
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const decoded = dec(await res.text());
-      if (!decoded) throw new Error('解压失败');
-      allData = Array.isArray(decoded) ? decoded : decoded.data || [];
-      // 补充 exchange/category（旧数据可能没有）
-      allData.forEach(r => {
-        if (!r.exchange) r.exchange = '手动上传';
-        if (!r.category) r.category = '其他';
-      });
-      document.getElementById('loading-state').style.display = 'none';
-      document.getElementById('app').style.display = 'block';
-      document.getElementById('ds').textContent = allData.length.toLocaleString() + ' 条记录';
-      document.getElementById('sb').style.display = 'flex';
-      document.getElementById('copy-btn').style.display = 'inline-flex';
-      initNav();
-      return;
-    } catch (e) {
-      document.getElementById('load-detail').textContent = '共享链接加载失败：' + e.message;
-    }
-  }
   autoLoadFromGitHub();
 });
 </script>

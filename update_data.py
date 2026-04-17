@@ -40,18 +40,23 @@ def get_weekdays(start: date, end: date) -> list[str]:
 
 def load_existing(path: str) -> pd.DataFrame:
     if not os.path.exists(path):
+        print(f"    文件不存在: {path}")
         return pd.DataFrame()
     try:
         df = pd.read_excel(path, dtype=str)
-        if df.empty or "交易日期" not in df.columns:
+        print(f"    文件读取成功，共 {len(df)} 行，列名: {df.columns.tolist()}")
+        if df.empty:
+            print(f"    文件为空")
             return pd.DataFrame()
-        # 尝试多种日期格式
+        if "交易日期" not in df.columns:
+            print(f"    未找到「交易日期」列，实际列名: {df.columns.tolist()}")
+            return pd.DataFrame()
         df["交易日期"] = pd.to_datetime(df["交易日期"], errors='coerce').dt.strftime("%Y-%m-%d")
         df = df.dropna(subset=["交易日期"])
-        print(f"    读取已有数据: {len(df)} 条，最新日期: {df['交易日期'].max()}")
+        print(f"    有效数据: {len(df)} 条，最新日期: {df['交易日期'].max()}")
         return df
     except Exception as e:
-        print(f"    读取已有文件失败: {e}，将全量拉取")
+        print(f"    读取失败: {e}")
         return pd.DataFrame()
 
 

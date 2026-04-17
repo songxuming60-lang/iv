@@ -41,7 +41,7 @@ def load_existing(path: str) -> pd.DataFrame:
         print(f"  >> 文件不存在: {path}")
         return pd.DataFrame()
     try:
-        df = pd.read_csv(path, dtype=str)
+        df = pd.read_csv(path, dtype=str, encoding='utf-8-sig')
         if df.empty or "交易日期" not in df.columns:
             return pd.DataFrame()
         df["交易日期"] = pd.to_datetime(df["交易日期"], errors='coerce').dt.strftime("%Y-%m-%d")

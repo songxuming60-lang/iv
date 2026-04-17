@@ -52,6 +52,17 @@ main{max-width:1200px;margin:0 auto;padding:1.5rem}
 .prod-tab.on{color:#fff}
 .prod-tab .code{font-family:var(--mono);font-size:10px;opacity:.7}
 
+/* Date range */
+.date-range{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.date-range input[type=date]{background:var(--bg3);border:.5px solid var(--border2);color:var(--text);padding:5px 10px;border-radius:6px;font-size:12px;font-family:var(--mono);cursor:pointer;outline:none}
+.date-range input[type=date]:focus{border-color:var(--accent)}
+.date-range input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5)}
+.preset-btns{display:flex;gap:4px}
+.preset{padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;border:.5px solid var(--border2);background:transparent;color:var(--muted);transition:all .15s;font-family:var(--sans);white-space:nowrap}
+.preset.on{background:var(--bg3);color:var(--text);border-color:var(--border2)}
+.preset:hover{background:var(--bg3);color:var(--text)}
+.date-sep{font-size:12px;color:var(--muted)}
+
 /* Controls */
 .ctrl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:1.25rem}
 .tg{display:flex;border:.5px solid var(--border2);border-radius:6px;overflow:hidden}
@@ -70,6 +81,14 @@ main{max-width:1200px;margin:0 auto;padding:1.5rem}
 .mc .sub{font-size:11px;color:var(--muted);margin-top:5px;font-family:var(--mono);word-break:break-all}
 .pt{height:3px;background:var(--border2);border-radius:2px;margin-top:8px;overflow:hidden}
 .pf{height:100%;border-radius:2px;transition:width .5s}
+
+/* Percentile bar */
+.pct-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:1.5rem}
+.pct-card{background:var(--card);border:.5px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;flex-direction:column;gap:4px}
+.pct-card .plbl{font-size:11px;color:var(--muted);letter-spacing:.03em}
+.pct-card .pval{font-family:var(--mono);font-size:18px;font-weight:500}
+.pct-card .psub{font-size:10px;color:var(--muted);font-family:var(--mono)}
+.pct-divider{height:.5px;background:var(--border);margin-bottom:1.5rem}
 
 /* Chart */
 .chart-card{background:var(--card);border:.5px solid var(--border);border-radius:12px;padding:1.25rem}
@@ -140,6 +159,23 @@ main{max-width:1200px;margin:0 auto;padding:1.5rem}
         <span class="nav-label">品种</span>
         <div id="prod-tabs" style="display:flex;gap:6px;flex-wrap:wrap"></div>
       </div>
+      <div class="nav-row">
+        <span class="nav-label">时段</span>
+        <div class="date-range">
+          <div class="preset-btns">
+            <button class="preset" data-p="1m">近1月</button>
+            <button class="preset" data-p="3m">近3月</button>
+            <button class="preset" data-p="6m">近6月</button>
+            <button class="preset" data-p="1y">近1年</button>
+            <button class="preset" data-p="3y">近3年</button>
+            <button class="preset on" data-p="all">全部</button>
+          </div>
+          <span class="date-sep">自定义</span>
+          <input type="date" id="date-from" title="开始日期">
+          <span class="date-sep">至</span>
+          <input type="date" id="date-to" title="结束日期">
+        </div>
+      </div>
     </div>
 
     <!-- Controls -->
@@ -172,6 +208,13 @@ main{max-width:1200px;margin:0 auto;padding:1.5rem}
         <div class="sub">当前IV在历史中的位置</div>
         <div class="pt"><div class="pf" id="pf" style="width:0%"></div></div>
       </div>
+    </div>
+
+    <div class="pct-cards" id="pct-cards">
+      <div class="pct-card"><div class="plbl">P5 分位数</div><div class="pval" id="p5">—</div><div class="psub" id="p5s">历史最低5%水平</div></div>
+      <div class="pct-card"><div class="plbl">P10 分位数</div><div class="pval" id="p10">—</div><div class="psub" id="p10s">历史较低10%水平</div></div>
+      <div class="pct-card"><div class="plbl">P90 分位数</div><div class="pval" id="p90">—</div><div class="psub" id="p90s">历史较高90%水平</div></div>
+      <div class="pct-card"><div class="plbl">P95 分位数</div><div class="pval" id="p95">—</div><div class="psub" id="p95s">历史最高95%水平</div></div>
     </div>
 
     <div class="chart-card">
@@ -223,6 +266,7 @@ DATA_FILES.forEach((f,i)=>{
 
 // ── State ──────────────────────────────────────────────────────────
 let allData=[],chart=null,chartType='line',viewMode='dominant',activeSeries=new Set();
+let dateFrom='',dateTo='';
 let curExchange='上期所',curCategory='金属',curProd='';
 
 // ── Share ──────────────────────────────────────────────────────────
@@ -437,12 +481,17 @@ function renderChips(){
 }
 
 // ── Data helpers ───────────────────────────────────────────────────
+function inDateRange(date){
+  if(dateFrom && date < dateFrom.replace(/-/g,'/')) return false;
+  if(dateTo && date > dateTo.replace(/-/g,'/')) return false;
+  return true;
+}
 function getDominant(){
   const byDate={};
-  allData.filter(r=>r.product===curProd).forEach(r=>{if(!byDate[r.date]||r.vol>byDate[r.date].vol)byDate[r.date]=r;});
+  allData.filter(r=>r.product===curProd&&inDateRange(r.date)).forEach(r=>{if(!byDate[r.date]||r.vol>byDate[r.date].vol)byDate[r.date]=r;});
   return Object.values(byDate).sort((a,b)=>a.date.localeCompare(b.date));
 }
-function getFiltered(){return allData.filter(r=>r.product===curProd&&(activeSeries.size===0||activeSeries.has(r.series)));}
+function getFiltered(){return allData.filter(r=>r.product===curProd&&inDateRange(r.date)&&(activeSeries.size===0||activeSeries.has(r.series)));}
 function getData(){return viewMode==='dominant'?getDominant():getFiltered();}
 
 // ── Metrics ────────────────────────────────────────────────────────
@@ -463,6 +512,31 @@ function renderMetrics(){
   const pf=document.getElementById('pf');
   pf.style.width=pct.toFixed(1)+'%';
   pf.style.background=pct>=80?'#ff5c5c':pct>=50?'#f5a623':'#3dd68c';
+
+  // Percentile values
+  const ivSorted=[...data.map(r=>r.iv)].sort((a,b)=>a-b);
+  const quantile=(arr,q)=>{
+    const pos=(arr.length-1)*q;
+    const lo=Math.floor(pos),hi=Math.ceil(pos);
+    return lo===hi?arr[lo]:arr[lo]+(arr[hi]-arr[lo])*(pos-lo);
+  };
+  const p5=quantile(ivSorted,.05),p10=quantile(ivSorted,.10),p90=quantile(ivSorted,.90),p95=quantile(ivSorted,.95);
+  const cur=latest.iv;
+  const pctColor=(v)=>cur>v?'#ff5c5c':'#3dd68c';
+  const aboveBelow=(v)=>cur>v?`当前高于此水平`:`当前低于此水平`;
+
+  document.getElementById('p5').textContent=p5.toFixed(2)+'%';
+  document.getElementById('p5').style.color=pctColor(p5);
+  document.getElementById('p5s').textContent=aboveBelow(p5);
+  document.getElementById('p10').textContent=p10.toFixed(2)+'%';
+  document.getElementById('p10').style.color=pctColor(p10);
+  document.getElementById('p10s').textContent=aboveBelow(p10);
+  document.getElementById('p90').textContent=p90.toFixed(2)+'%';
+  document.getElementById('p90').style.color=pctColor(p90);
+  document.getElementById('p90s').textContent=aboveBelow(p90);
+  document.getElementById('p95').textContent=p95.toFixed(2)+'%';
+  document.getElementById('p95').style.color=pctColor(p95);
+  document.getElementById('p95s').textContent=aboveBelow(p95);
 }
 
 // ── Chart ──────────────────────────────────────────────────────────
@@ -515,6 +589,41 @@ document.getElementById('ttg').querySelectorAll('.tb').forEach(btn=>btn.addEvent
   document.getElementById('ttg').querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');chartType=btn.dataset.t;renderChart();
 }));
+
+// ── Date range controls ───────────────────────────────────────────
+function applyPreset(p){
+  const now = new Date();
+  const fmt = d => d.toISOString().slice(0,10);
+  const sub = (d,months) => { const r=new Date(d); r.setMonth(r.getMonth()-months); return r; };
+  const subY = (d,years) => { const r=new Date(d); r.setFullYear(r.getFullYear()-years); return r; };
+  if(p==='all'){dateFrom='';dateTo='';}
+  else if(p==='1m'){dateFrom=fmt(sub(now,1));dateTo='';}
+  else if(p==='3m'){dateFrom=fmt(sub(now,3));dateTo='';}
+  else if(p==='6m'){dateFrom=fmt(sub(now,6));dateTo='';}
+  else if(p==='1y'){dateFrom=fmt(subY(now,1));dateTo='';}
+  else if(p==='3y'){dateFrom=fmt(subY(now,3));dateTo='';}
+  document.getElementById('date-from').value=dateFrom;
+  document.getElementById('date-to').value=dateTo;
+}
+
+document.querySelectorAll('.preset').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.preset').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on');
+    applyPreset(btn.dataset.p);
+    renderAll();
+  });
+});
+document.getElementById('date-from').addEventListener('change',e=>{
+  dateFrom=e.target.value;
+  document.querySelectorAll('.preset').forEach(b=>b.classList.remove('on'));
+  renderAll();
+});
+document.getElementById('date-to').addEventListener('change',e=>{
+  dateTo=e.target.value;
+  document.querySelectorAll('.preset').forEach(b=>b.classList.remove('on'));
+  renderAll();
+});
 
 // ── Entry point ────────────────────────────────────────────────────
 window.addEventListener('load', async () => {

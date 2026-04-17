@@ -585,34 +585,36 @@ const DATA_FILES = [
 ];
 
 async function autoLoadFromGitHub() {
-  // Skip if data already loaded (e.g. from URL hash restore)
-
   const status = document.getElementById('auto-status');
   status.style.display = 'block';
   status.textContent = '正在加载数据…';
 
-  let loaded = 0;
-  for (const file of DATA_FILES) {
-    try {
+  // 所有文件并行请求
+  const results = await Promise.allSettled(
+    DATA_FILES.map(async file => {
       const url = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${file.path}`;
       const res = await fetch(url);
-      if (!res.ok) continue;
+      if (!res.ok) throw new Error(res.status);
       const buf = await res.arrayBuffer();
       const wb = XLSX.read(new Uint8Array(buf), { type: 'array', cellDates: false });
       const rows = sheetToRows(wb.Sheets[wb.SheetNames[0]]);
-      if (addFileData(file.name, rows)) loaded++;
-      status.textContent = `正在加载数据… ${loaded}/${DATA_FILES.length}`;
-    } catch(e) {
-      console.warn('自动加载失败:', file.name, e);
+      return { name: file.name, rows };
+    })
+  );
+
+  let loaded = 0;
+  results.forEach(r => {
+    if (r.status === 'fulfilled') {
+      if (addFileData(r.value.name, r.value.rows)) loaded++;
     }
-  }
+  });
 
   if (loaded > 0) {
     rebuildData();
     renderFileList();
     refreshApp();
-    status.textContent = `已自动加载 ${loaded} 个品种`;
-    setTimeout(() => { status.style.display = 'none'; }, 3000);
+    status.textContent = `已加载 ${loaded} 个品种`;
+    setTimeout(() => { status.style.display = 'none'; }, 2000);
   } else {
     status.textContent = '自动加载失败，请手动上传';
     status.style.color = 'var(--warn)';

@@ -22,6 +22,13 @@ jobs:
       - name: 安装依赖
         run: pip install -r requirements.txt
 
+      - name: 检查data目录
+        run: |
+          echo "=== 当前目录 ==="
+          pwd
+          echo "=== data目录 ==="
+          ls -la data/ || echo "data目录不存在"
+
       - name: 运行数据更新脚本
         run: python update_data.py
 

@@ -39,9 +39,20 @@ def get_weekdays(start: date, end: date) -> list[str]:
 
 
 def load_existing(path: str) -> pd.DataFrame:
-    if os.path.exists(path):
-        return pd.read_excel(path, dtype=str)
-    return pd.DataFrame()
+    if not os.path.exists(path):
+        return pd.DataFrame()
+    try:
+        df = pd.read_excel(path, dtype=str)
+        if df.empty or "交易日期" not in df.columns:
+            return pd.DataFrame()
+        # 尝试多种日期格式
+        df["交易日期"] = pd.to_datetime(df["交易日期"], errors='coerce').dt.strftime("%Y-%m-%d")
+        df = df.dropna(subset=["交易日期"])
+        print(f"    读取已有数据: {len(df)} 条，最新日期: {df['交易日期'].max()}")
+        return df
+    except Exception as e:
+        print(f"    读取已有文件失败: {e}，将全量拉取")
+        return pd.DataFrame()
 
 
 def fetch_one(symbol: str, trade_date: str) -> pd.DataFrame | None:
@@ -72,10 +83,16 @@ def update_symbol(symbol: str, output_path: str, list_date: date) -> str:
     existing = load_existing(output_path)
 
     if not existing.empty and "交易日期" in existing.columns:
-        last_date = pd.to_datetime(existing["交易日期"]).max().date()
-        start = last_date + timedelta(days=1)
+        try:
+            last_date = pd.to_datetime(existing["交易日期"]).max().date()
+            start = last_date + timedelta(days=1)
+            print(f"已有数据至 {last_date}，从 {start} 开始补充")
+        except:
+            start = list_date
+            print(f"日期解析失败，从上市日 {start} 开始")
     else:
         start = list_date
+        print(f"无历史数据，从上市日 {start} 开始全量拉取")
 
     end = date.today()
     if start > end:

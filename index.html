@@ -586,7 +586,6 @@ const DATA_FILES = [
 
 async function autoLoadFromGitHub() {
   // Skip if data already loaded (e.g. from URL hash restore)
-  if (allData.length > 0) return;
 
   const status = document.getElementById('auto-status');
   status.style.display = 'block';

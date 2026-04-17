@@ -1,5 +1,6 @@
 """
 上期所全品种期权历史隐含波动率自动更新脚本
+使用 CSV 格式存储，体积更小加载更快
 """
 
 import akshare as ak
@@ -10,16 +11,16 @@ import os
 
 # ── 品种配置 ───────────────────────────────────────────────────────
 SYMBOLS = {
-    "铜期权":    ("data/copper_iv.xlsx",    date(2018,  9, 21)),
-    "天然橡胶期权": ("data/rubber_iv.xlsx",    date(2019,  1, 28)),
-    "黄金期权":   ("data/gold_iv.xlsx",      date(2019, 12, 20)),
-    "铝期权":    ("data/aluminum_iv.xlsx",  date(2020,  8, 10)),
-    "锌期权":    ("data/zinc_iv.xlsx",      date(2020,  8, 10)),
-    "白银期权":   ("data/silver_iv.xlsx",    date(2022, 12, 26)),
-    "铅期权":    ("data/lead_iv.xlsx",      date(2024,  9,  2)),
-    "镍期权":    ("data/nickel_iv.xlsx",    date(2024,  9,  2)),
-    "锡期权":    ("data/tin_iv.xlsx",       date(2024,  9,  2)),
-    "燃料油期权":  ("data/fuel_iv.xlsx",     date(2025,  9, 10)),
+    "铜期权":     ("data/copper_iv.csv",    date(2018,  9, 21)),
+    "天然橡胶期权": ("data/rubber_iv.csv",    date(2019,  1, 28)),
+    "黄金期权":    ("data/gold_iv.csv",      date(2019, 12, 20)),
+    "铝期权":     ("data/aluminum_iv.csv",  date(2020,  8, 10)),
+    "锌期权":     ("data/zinc_iv.csv",      date(2020,  8, 10)),
+    "白银期权":    ("data/silver_iv.csv",    date(2022, 12, 26)),
+    "铅期权":     ("data/lead_iv.csv",      date(2024,  9,  2)),
+    "镍期权":     ("data/nickel_iv.csv",    date(2024,  9,  2)),
+    "锡期权":     ("data/tin_iv.csv",       date(2024,  9,  2)),
+    "燃料油期权":  ("data/fuel_iv.csv",      date(2025,  9, 10)),
 }
 
 SLEEP_SEC = 0.3
@@ -36,33 +37,19 @@ def get_weekdays(start: date, end: date) -> list[str]:
 
 
 def load_existing(path: str) -> pd.DataFrame:
-    print(f"  >> 检查文件: {path}")
-    print(f"  >> 工作目录: {os.getcwd()}")
-
     if not os.path.exists(path):
-        data_dir = os.path.dirname(path)
-        if os.path.exists(data_dir):
-            print(f"  >> 文件不存在，{data_dir}/ 内容: {os.listdir(data_dir)}")
-        else:
-            print(f"  >> 文件不存在，{data_dir}/ 目录也不存在")
+        print(f"  >> 文件不存在: {path}")
         return pd.DataFrame()
-
-    print(f"  >> 文件存在，大小: {os.path.getsize(path)} 字节")
-
     try:
-        df = pd.read_excel(path, dtype=str)
-        print(f"  >> 读取成功: {len(df)} 行，列名: {df.columns.tolist()}")
-        if df.empty:
-            return pd.DataFrame()
-        if "交易日期" not in df.columns:
-            print(f"  >> 找不到交易日期列！")
+        df = pd.read_csv(path, dtype=str)
+        if df.empty or "交易日期" not in df.columns:
             return pd.DataFrame()
         df["交易日期"] = pd.to_datetime(df["交易日期"], errors='coerce').dt.strftime("%Y-%m-%d")
         df = df.dropna(subset=["交易日期"])
-        print(f"  >> 有效数据: {len(df)} 条，最新日期: {df['交易日期'].max()}")
+        print(f"  >> 已有数据: {len(df)} 条，最新日期: {df['交易日期'].max()}")
         return df
     except Exception as e:
-        print(f"  >> 读取异常: {e}")
+        print(f"  >> 读取失败: {e}")
         return pd.DataFrame()
 
 
@@ -102,7 +89,7 @@ def update_symbol(symbol: str, output_path: str, list_date: date):
             print(f"  已有数据至 {last_date}，从 {start} 开始补充")
         except Exception as e:
             start = list_date
-            print(f"  日期解析失败({e})，从上市日开始")
+            print(f"  日期解析失败，从上市日开始")
     else:
         start = list_date
         print(f"  无历史数据，从上市日 {start} 开始全量拉取")
@@ -143,13 +130,12 @@ def update_symbol(symbol: str, output_path: str, list_date: date):
     else:
         combined = new_df
 
-    combined.to_excel(output_path, index=False)
+    combined.to_csv(output_path, index=False, encoding='utf-8-sig')
     print(f"  已保存 {len(combined)} 条 → {output_path}")
 
 
 def main():
     print(f"工作目录: {os.getcwd()}")
-    print(f"根目录内容: {os.listdir('.')}")
     print(f"开始更新，请求间隔: {SLEEP_SEC}s，品种数: {len(SYMBOLS)}")
 
     for sym, (path, ld) in SYMBOLS.items():

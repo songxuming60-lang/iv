@@ -25,29 +25,9 @@ header{border-bottom:.5px solid var(--border);padding:0 2rem;height:52px;display
 .btn:hover{background:#252d42;border-color:rgba(255,255,255,.2)}
 .btn.ok{background:var(--accent2);border-color:var(--accent2);color:#0a1f14;font-weight:500}
 .btn.ok:hover{background:#34c47e}
-.btn.danger{background:transparent;border-color:var(--danger);color:var(--danger)}
-.btn.danger:hover{background:rgba(255,92,92,.08)}
+.btn.sm{padding:5px 10px;font-size:12px}
 
-main{max-width:1100px;margin:0 auto;padding:1.5rem}
-
-/* Drop zone */
-.dropzone{border:1px dashed var(--border2);border-radius:12px;padding:2.5rem 2rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg2);margin-bottom:1.25rem}
-.dropzone:hover,.dropzone.drag{border-color:var(--accent);background:rgba(79,158,255,.05)}
-.dropzone .ico{font-size:32px;margin-bottom:12px;opacity:.6}
-.dropzone h3{font-size:15px;font-weight:500;margin-bottom:5px}
-.dropzone p{font-size:13px;color:var(--muted)}
-.dropzone .tip{margin-top:8px;font-size:12px;color:var(--accent)}
-
-/* File list */
-.file-list{display:flex;flex-direction:column;gap:6px;margin-bottom:1.25rem}
-.file-item{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg2);border:.5px solid var(--border2);border-radius:8px}
-.file-icon{width:28px;height:28px;border-radius:6px;background:rgba(79,158,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.file-name{font-size:13px;font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.file-meta{font-size:11px;color:var(--muted);white-space:nowrap}
-.file-prods{display:flex;gap:4px;flex-wrap:wrap}
-.prod-badge{font-size:11px;padding:2px 7px;border-radius:10px;border:.5px solid;font-family:var(--mono)}
-.file-del{background:transparent;border:none;cursor:pointer;color:var(--muted);padding:4px;border-radius:4px;display:flex;align-items:center;transition:color .15s}
-.file-del:hover{color:var(--danger)}
+main{max-width:1200px;margin:0 auto;padding:1.5rem}
 
 /* Share bar */
 .share-bar{display:flex;align-items:center;gap:10px;background:var(--bg2);border:.5px solid var(--border2);border-radius:8px;padding:10px 14px;margin-bottom:1.25rem}
@@ -56,23 +36,30 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
 .copied{font-size:12px;color:var(--accent2);white-space:nowrap;opacity:0;transition:opacity .3s}
 .copied.show{opacity:1}
 
+/* Navigation */
+.nav-section{background:var(--bg2);border:.5px solid var(--border);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.25rem}
+.nav-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.nav-row+.nav-row{margin-top:10px;padding-top:10px;border-top:.5px solid var(--border)}
+.nav-label{font-size:11px;color:var(--muted);letter-spacing:.05em;min-width:52px;flex-shrink:0}
+
+.ex-tab{padding:5px 14px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:.5px solid var(--border2);background:transparent;color:var(--muted);transition:all .15s;font-family:var(--sans)}
+.ex-tab.on{background:var(--accent);border-color:var(--accent);color:#fff}
+
+.cat-tab{padding:4px 14px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:.5px solid var(--border2);background:transparent;color:var(--muted);transition:all .15s;font-family:var(--sans)}
+.cat-tab.on{color:#fff}
+
+.prod-tab{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;border:.5px solid var(--border2);background:transparent;color:var(--muted);transition:all .15s;font-family:var(--sans)}
+.prod-tab.on{color:#fff}
+.prod-tab .code{font-family:var(--mono);font-size:10px;opacity:.7}
+
 /* Controls */
 .ctrl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:1.25rem}
-select{background:var(--bg3);border:.5px solid var(--border2);color:var(--text);padding:7px 12px;border-radius:6px;font-size:13px;font-family:var(--sans);cursor:pointer}
-select:focus{outline:none;border-color:var(--accent)}
-
-/* Product tabs */
-.prod-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.25rem}
-.prod-tab{padding:6px 16px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;border:.5px solid var(--border2);background:transparent;color:var(--muted);transition:all .15s;font-family:var(--sans)}
-.prod-tab.on{color:#fff}
-
 .tg{display:flex;border:.5px solid var(--border2);border-radius:6px;overflow:hidden}
 .tb{padding:7px 15px;font-size:13px;font-family:var(--sans);background:transparent;border:none;cursor:pointer;color:var(--muted);transition:all .15s;white-space:nowrap}
 .tb.on{background:var(--bg3);color:var(--text);font-weight:500}
 
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.25rem}
 .chip{padding:4px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:.5px solid var(--border2);background:transparent;color:var(--muted);transition:all .15s;font-family:var(--sans)}
-
 .info-bar{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;padding:9px 14px;background:rgba(79,158,255,.08);border:.5px solid rgba(79,158,255,.2);border-radius:8px;font-size:12px;color:var(--accent)}
 
 /* Metrics */
@@ -91,76 +78,71 @@ select:focus{outline:none;border-color:var(--accent)}
 .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:14px}
 .li{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
 .ld{width:10px;height:3px;border-radius:2px;flex-shrink:0}
-
 .empty-s{display:flex;flex-direction:column;align-items:center;justify-content:center;height:340px;color:var(--muted);gap:10px}
 .empty-s p{font-size:14px}.empty-s small{font-size:12px}
 
-/* Empty state (no files) */
-#no-data{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem;color:var(--muted);gap:10px;text-align:center}
-#no-data p{font-size:14px}#no-data small{font-size:12px}
+/* Loading / empty */
+#loading-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4rem 2rem;color:var(--muted);gap:12px;text-align:center}
+#loading-state p{font-size:14px}#loading-state small{font-size:12px}
+.spin{width:28px;height:28px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-@media(max-width:640px){
-  .metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
-  header{padding:0 1rem}main{padding:1rem}
-}
+@media(max-width:640px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}header{padding:0 1rem}main{padding:1rem}}
 </style>
 </head>
 <body>
-
 <header>
   <div class="logo">IV<span>.</span>Analyzer</div>
   <div class="hdr-r">
-    <div id="ds" style="font-size:12px;color:var(--muted)"></div>
-    <div id="auto-status" style="font-size:12px;color:var(--accent);display:none"></div>
-    <label class="btn">
-      <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2v8M5 5l3-3 3 3M3 11v2h10v-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      添加文件
+    <div id="auto-status" style="font-size:12px;color:var(--muted);display:none"></div>
+    <label class="btn sm" title="手动上传补充数据">
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M8 2v8M5 5l3-3 3 3M3 11v2h10v-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      上传
       <input type="file" accept=".xlsx,.xls,.csv" id="fi" multiple style="display:none">
     </label>
   </div>
 </header>
 
 <main>
-  <!-- Share bar -->
   <div id="sb" class="share-bar" style="display:none">
     <span class="share-lbl">分享链接</span>
     <input class="share-url" id="su" readonly placeholder="点击左侧按钮生成…">
     <button class="btn ok" id="gen-btn" onclick="generateShareLink()">
-      <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M8 2v8M5 5l3-3 3 3M3 11v2h10v-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      生成分享链接
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M8 2v8M5 5l3-3 3 3M3 11v2h10v-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>生成分享链接
     </button>
     <button class="btn" id="copy-btn" onclick="copyLink()" style="display:none">
-      <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M11 5V3.5A1.5 1.5 0 009.5 2h-6A1.5 1.5 0 002 3.5v6A1.5 1.5 0 003.5 11H5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-      复制
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M11 5V3.5A1.5 1.5 0 009.5 2h-6A1.5 1.5 0 002 3.5v6A1.5 1.5 0 003.5 11H5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>复制
     </button>
     <span class="copied" id="ct">已复制 ✓</span>
   </div>
 
-  <!-- Drop zone (always visible) -->
-  <div id="dz" class="dropzone" onclick="document.getElementById('fi').click()">
-    <div class="ico">📂</div>
-    <h3>拖拽或点击上传数据文件</h3>
-    <p>支持同时上传多个 .xlsx / .xls / .csv 文件</p>
-    <p class="tip">部署到 Netlify 后，每次打开页面自动加载最新数据</p>
+  <!-- Loading state -->
+  <div id="loading-state">
+    <div class="spin"></div>
+    <p>正在加载数据…</p>
+    <small id="load-detail">连接 GitHub 数据源</small>
   </div>
 
-  <!-- Uploaded file list -->
-  <div class="file-list" id="fl"></div>
-
-  <!-- No data placeholder -->
-  <div id="no-data">
-    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity=".25"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-    <p>尚未上传任何文件</p>
-    <small>上传后图表将显示在这里</small>
-  </div>
-
-  <!-- App (shown once data loaded) -->
+  <!-- App -->
   <div id="app" style="display:none">
 
-    <!-- Product tabs -->
-    <div class="prod-tabs" id="ptabs"></div>
+    <!-- Navigation -->
+    <div class="nav-section">
+      <div class="nav-row">
+        <span class="nav-label">交易所</span>
+        <div id="ex-tabs"></div>
+      </div>
+      <div class="nav-row">
+        <span class="nav-label">品类</span>
+        <div id="cat-tabs" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+      </div>
+      <div class="nav-row">
+        <span class="nav-label">品种</span>
+        <div id="prod-tabs" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+      </div>
+    </div>
 
-    <!-- Controls row -->
+    <!-- Controls -->
     <div class="ctrl">
       <div class="tg" id="vtg">
         <button class="tb on" data-v="dominant">主力合约</button>
@@ -170,6 +152,7 @@ select:focus{outline:none;border-color:var(--accent)}
         <button class="tb on" data-t="line">折线图</button>
         <button class="tb" data-t="bar">柱状图</button>
       </div>
+      <div id="ds" style="font-size:12px;color:var(--muted);margin-left:auto"></div>
     </div>
 
     <div id="ib" class="info-bar">
@@ -209,77 +192,79 @@ select:focus{outline:none;border-color:var(--accent)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
 <script>
-const COLORS = ['#4f9eff','#3dd68c','#f5a623','#ff5c5c','#c77dff','#ff9f43','#26d7e8','#fd79a8'];
-// Tab colors mapped by index
-const TAB_COLORS = ['#4f9eff','#3dd68c','#f5a623','#ff5c5c','#c77dff','#ff9f43','#26d7e8','#fd79a8'];
+const COLORS=['#4f9eff','#3dd68c','#f5a623','#ff5c5c','#c77dff','#ff9f43','#26d7e8','#fd79a8'];
 
-// State
-let fileStore = [];       // [{id, name, rows, products:[]}]
-let allData = [];         // merged across all files
-let chart = null;
-let chartType = 'line';
-let viewMode = 'dominant';
-let activeSeries = new Set();
-let curProd = '';
+// ── GitHub 配置 ────────────────────────────────────────────────────
+const GITHUB_USER='songxuming60-lang';
+const GITHUB_REPO='iv';
+const GITHUB_BRANCH='main';
 
-// ── Share via /api/store (Netlify Blobs, same-origin, no CORS) ────
+const DATA_FILES=[
+  {name:'铜期权',     code:'CU', path:'data/copper_iv.xlsx',   exchange:'上期所', category:'金属'},
+  {name:'铝期权',     code:'AL', path:'data/aluminum_iv.xlsx', exchange:'上期所', category:'金属'},
+  {name:'锌期权',     code:'ZN', path:'data/zinc_iv.xlsx',     exchange:'上期所', category:'金属'},
+  {name:'铅期权',     code:'PB', path:'data/lead_iv.xlsx',     exchange:'上期所', category:'金属'},
+  {name:'镍期权',     code:'NI', path:'data/nickel_iv.xlsx',   exchange:'上期所', category:'金属'},
+  {name:'锡期权',     code:'SN', path:'data/tin_iv.xlsx',      exchange:'上期所', category:'金属'},
+  {name:'黄金期权',   code:'AU', path:'data/gold_iv.xlsx',     exchange:'上期所', category:'金属'},
+  {name:'白银期权',   code:'AG', path:'data/silver_iv.xlsx',   exchange:'上期所', category:'金属'},
+  {name:'燃料油期权', code:'FU', path:'data/fuel_iv.xlsx',     exchange:'上期所', category:'能源化工'},
+  {name:'天然橡胶期权',code:'RU', path:'data/rubber_iv.xlsx',  exchange:'上期所', category:'能源化工'},
+];
+
+// 产品元数据查找表 (code → {name, exchange, category, color})
+const PROD_META={};
+const CAT_COLORS={'金属':'#4f9eff','能源化工':'#3dd68c','农产品':'#f5a623'};
+const EX_COLORS={'上期所':'#4f9eff','大商所':'#3dd68c','郑商所':'#f5a623'};
+
+DATA_FILES.forEach((f,i)=>{
+  PROD_META[f.code]={name:f.name.replace('期权',''),exchange:f.exchange,category:f.category,color:COLORS[i%COLORS.length]};
+});
+
+// ── State ──────────────────────────────────────────────────────────
+let allData=[],chart=null,chartType='line',viewMode='dominant',activeSeries=new Set();
+let curExchange='上期所',curCategory='金属',curProd='';
+
+// ── Share ──────────────────────────────────────────────────────────
 function enc(d){try{return LZString.compressToBase64(JSON.stringify(d));}catch(e){return null;}}
 function dec(s){try{return JSON.parse(LZString.decompressFromBase64(s));}catch(e){return null;}}
 
 async function generateShareLink(){
   if(!allData.length)return;
   const btn=document.getElementById('gen-btn');
-  const input=document.getElementById('su');
-  btn.disabled=true; btn.textContent='上传中…';
+  btn.disabled=true;btn.textContent='上传中…';
   try{
-    const payload={data:allData,files:fileStore.map(f=>({id:f.id,name:f.name,products:f.products}))};
-    const compressed=enc(payload);
-    if(!compressed)throw new Error('数据压缩失败');
-
-    const res=await fetch('/api/store',{
-      method:'POST',
-      headers:{'Content-Type':'text/plain'},
-      body:compressed
-    });
-    if(!res.ok)throw new Error('服务器错误 HTTP '+res.status);
+    const compressed=enc(allData);
+    if(!compressed)throw new Error('压缩失败');
+    const res=await fetch('/api/store',{method:'POST',headers:{'Content-Type':'text/plain'},body:compressed});
+    if(!res.ok)throw new Error('HTTP '+res.status);
     const {id}=await res.json();
-    if(!id)throw new Error('未返回ID');
-
     const url=location.origin+location.pathname+'#s='+id;
-    input.value=url;
+    document.getElementById('su').value=url;
     history.replaceState(null,'','#s='+id);
     document.getElementById('copy-btn').style.display='inline-flex';
     btn.innerHTML='<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8l3 3 7-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>已生成';
     btn.disabled=false;
   }catch(e){
     btn.disabled=false;
-    btn.innerHTML='<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M8 2v8M5 5l3-3 3 3M3 11v2h10v-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>生成分享链接';
-    alert('链接生成失败：'+e.message+'\n\n提示：请确认已通过 Netlify 部署（非本地打开），且 /api/store 函数已部署成功。');
+    btn.innerHTML='生成分享链接';
+    alert('生成失败：'+e.message);
   }
 }
 function copyLink(){
   const input=document.getElementById('su');
-  const showTip=()=>{const t=document.getElementById('ct');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);};
-  if(navigator.clipboard&&window.isSecureContext){
-    navigator.clipboard.writeText(input.value).then(showTip).catch(()=>fallbackCopy(input,showTip));
-  }else{
-    fallbackCopy(input,showTip);
-  }
+  const tip=()=>{const t=document.getElementById('ct');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);};
+  if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(input.value).then(tip).catch(()=>fbCopy(input,tip));
+  else fbCopy(input,tip);
 }
-function fallbackCopy(input,cb){
-  input.select();input.setSelectionRange(0,99999);
-  try{document.execCommand('copy');cb();}catch(e){alert('请手动复制以下链接：\n'+input.value);}
-  window.getSelection&&window.getSelection().removeAllRanges();
-}
+function fbCopy(input,cb){input.select();input.setSelectionRange(0,99999);try{document.execCommand('copy');cb();}catch(e){alert('请手动复制：\n'+input.value);}window.getSelection&&window.getSelection().removeAllRanges();}
 
-// ── Excel date ─────────────────────────────────────────────────────
+// ── Excel helpers ──────────────────────────────────────────────────
 function xlDate(v){
   if(typeof v==='number'){const d=XLSX.SSF.parse_date_code(v);if(!d)return String(v);return `${d.y}/${String(d.m).padStart(2,'0')}/${String(d.d).padStart(2,'0')}`;}
   if(v instanceof Date)return `${v.getFullYear()}/${String(v.getMonth()+1).padStart(2,'0')}/${String(v.getDate()).padStart(2,'0')}`;
   return String(v).replace(/-/g,'/');
 }
-
-// ── Parse helpers ──────────────────────────────────────────────────
 function sheetToRows(sheet){
   const raw=XLSX.utils.sheet_to_json(sheet,{header:1,defval:''});
   if(raw.length<2)return[];
@@ -295,15 +280,9 @@ function detectCols(rows){
   if(!rows.length)return null;
   const keys=Object.keys(rows[0]);
   const find=(...c)=>keys.find(k=>c.some(x=>String(k).includes(x)));
-  return{
-    date:  find('交易日期','日期','date','Date'),
-    series:find('合约系列','合约','series','contract'),
-    iv:    find('隐含波动率(%)','隐含波动率%','IV%')||find('隐含波动率','IV','iv'),
-    vol:   find('成交量','volume','Volume'),
-  };
+  return{date:find('交易日期','日期','date'),series:find('合约系列','合约','series'),iv:find('隐含波动率(%)','隐含波动率%','IV%')||find('隐含波动率','IV','iv'),vol:find('成交量','volume','Volume')};
 }
-
-function rowsToData(rows, fileId){
+function rowsToData(rows,exchange,category){
   const cols=detectCols(rows);
   if(!cols.date||!cols.series||!cols.iv)return null;
   return rows
@@ -311,148 +290,156 @@ function rowsToData(rows, fileId){
     .map(r=>{
       const iv=parseFloat(r[cols.iv]),vol=cols.vol?parseFloat(r[cols.vol]):NaN;
       const series=String(r[cols.series]).trim();
-      return{date:xlDate(r[cols.date]),series,iv:isNaN(iv)?null:iv,vol:isNaN(vol)?0:vol,product:series.replace(/\d+/g,'').toUpperCase(),fileId};
+      return{date:xlDate(r[cols.date]),series,iv:isNaN(iv)?null:iv,vol:isNaN(vol)?0:vol,
+             product:series.replace(/\d+/g,'').toUpperCase(),exchange,category};
     }).filter(r=>r.iv!==null&&r.date);
 }
 
-// ── Rebuild merged allData ─────────────────────────────────────────
-function rebuildData(){
-  allData=fileStore.flatMap(f=>f.data);
-}
+// ── Auto load from GitHub ──────────────────────────────────────────
+async function autoLoadFromGitHub(){
+  const status=document.getElementById('auto-status');
+  const detail=document.getElementById('load-detail');
+  status.style.display='block';status.textContent='加载中…';
 
-// ── File list UI ───────────────────────────────────────────────────
-const prodColors={};
-let prodColorIdx=0;
-function prodColor(p){
-  if(!prodColors[p]){prodColors[p]=TAB_COLORS[prodColorIdx%TAB_COLORS.length];prodColorIdx++;}
-  return prodColors[p];
-}
+  const results=await Promise.allSettled(
+    DATA_FILES.map(async file=>{
+      const url=`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${file.path}`;
+      const res=await fetch(url);
+      if(!res.ok)return null;
+      const buf=await res.arrayBuffer();
+      const wb=XLSX.read(new Uint8Array(buf),{type:'array',cellDates:false});
+      const rows=sheetToRows(wb.Sheets[wb.SheetNames[0]]);
+      return{file,rows};
+    })
+  );
 
-function renderFileList(){
-  const fl=document.getElementById('fl');
-  fl.innerHTML=fileStore.map(f=>`
-    <div class="file-item" id="fi-${f.id}">
-      <div class="file-icon">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z" stroke="#4f9eff" stroke-width="1.3" stroke-linejoin="round"/><path d="M9 2v4h4" stroke="#4f9eff" stroke-width="1.3" stroke-linejoin="round"/></svg>
-      </div>
-      <div class="file-name" title="${f.name}">${f.name}</div>
-      <div class="file-prods">${f.products.map(p=>`<span class="prod-badge" style="border-color:${prodColor(p)}44;color:${prodColor(p)};background:${prodColor(p)}14">${p}</span>`).join('')}</div>
-      <div class="file-meta">${f.data.length} 条</div>
-      <button class="file-del" onclick="removeFile('${f.id}')" title="移除此文件">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-      </button>
-    </div>
-  `).join('');
-}
-
-function removeFile(id){
-  fileStore=fileStore.filter(f=>f.id!==id);
-  rebuildData();
-  renderFileList();
-  refreshApp();
-}
-
-// ── Process a single file ──────────────────────────────────────────
-let fileIdCounter=0;
-function addFileData(name, rows){
-  const data=rowsToData(rows, String(fileIdCounter));
-  if(!data||!data.length){alert(`文件「${name}」解析后无有效数据，已跳过`);return false;}
-  const products=[...new Set(data.map(r=>r.product))];
-  fileStore.push({id:String(fileIdCounter++),name,data,products});
-  return true;
-}
-
-function processFileList(fileList){
-  const files=Array.from(fileList);
-  let pending=files.length;
-  let added=0;
-  if(!pending)return;
-
-  files.forEach(file=>{
-    const reader=new FileReader();
-    const isCSV=file.name.toLowerCase().endsWith('.csv');
-    reader.onload=ev=>{
-      let rows=[];
-      if(isCSV){
-        rows=parseCSV(ev.target.result);
-      }else{
-        let wb;
-        try{wb=XLSX.read(new Uint8Array(ev.target.result),{type:'array',cellDates:false});}
-        catch(err){alert('文件读取失败：'+file.name+'\n'+err.message);pending--;if(!pending)finalise();return;}
-        // Use first sheet
-        rows=sheetToRows(wb.Sheets[wb.SheetNames[0]]);
-      }
-      if(addFileData(file.name, rows))added++;
-      pending--;
-      if(!pending)finalise();
-    };
-    isCSV?reader.readAsText(file,'UTF-8'):reader.readAsArrayBuffer(file);
+  let loaded=0;
+  results.forEach(r=>{
+    if(r.status==='fulfilled'&&r.value){
+      const {file,rows}=r.value;
+      const data=rowsToData(rows,file.exchange,file.category);
+      if(data&&data.length){allData.push(...data);loaded++;}
+    }
   });
 
-  function finalise(){
-    if(!added)return;
-    rebuildData();
-    renderFileList();
-    refreshApp();
+  if(loaded>0){
+    document.getElementById('loading-state').style.display='none';
+    document.getElementById('app').style.display='block';
+    document.getElementById('ds').textContent=allData.length.toLocaleString()+' 条记录';
     document.getElementById('sb').style.display='flex';
+    status.textContent=`已加载 ${loaded} 个品种`;
+    setTimeout(()=>{status.style.display='none';},2000);
+    initNav();
+  }else{
+    detail.textContent='数据加载失败，请手动上传文件';
+    document.querySelector('.spin').style.display='none';
+    status.style.display='none';
   }
 }
 
-// ── App refresh ────────────────────────────────────────────────────
-function refreshApp(){
-  const prods=[...new Set(allData.map(r=>r.product))].sort();
-  document.getElementById('no-data').style.display=prods.length?'none':'flex';
-  document.getElementById('app').style.display=prods.length?'block':'none';
-  document.getElementById('ds').textContent=allData.length?allData.length+' 条记录':'';
+// ── Manual file upload ─────────────────────────────────────────────
+document.getElementById('fi').addEventListener('change',e=>{
+  const files=Array.from(e.target.files);let pending=files.length,added=0;
+  if(!pending)return;
+  files.forEach(file=>{
+    const reader=new FileReader();const isCSV=file.name.toLowerCase().endsWith('.csv');
+    reader.onload=ev=>{
+      let rows=[];
+      if(isCSV){rows=parseCSV(ev.target.result);}
+      else{let wb;try{wb=XLSX.read(new Uint8Array(ev.target.result),{type:'array',cellDates:false});}catch(err){pending--;if(!pending&&added>0)finUpload();return;}rows=sheetToRows(wb.Sheets[wb.SheetNames[0]]);}
+      const data=rowsToData(rows,'手动上传','其他');
+      if(data&&data.length){allData.push(...data);added++;}
+      pending--;if(!pending&&added>0)finUpload();
+    };
+    isCSV?reader.readAsText(file,'UTF-8'):reader.readAsArrayBuffer(file);
+  });
+  function finUpload(){
+    document.getElementById('loading-state').style.display='none';
+    document.getElementById('app').style.display='block';
+    document.getElementById('ds').textContent=allData.length.toLocaleString()+' 条记录';
+    initNav();
+  }
+  e.target.value='';
+});
 
-  if(!prods.length){if(chart){chart.destroy();chart=null;}return;}
+// ── Navigation ─────────────────────────────────────────────────────
+function getExchanges(){return[...new Set(allData.map(r=>r.exchange))];}
+function getCategories(ex){return[...new Set(allData.filter(r=>r.exchange===ex).map(r=>r.category))];}
+function getProds(ex,cat){return[...new Set(allData.filter(r=>r.exchange===ex&&r.category===cat).map(r=>r.product))];}
 
-  // Keep current product if still valid
-  if(!prods.includes(curProd))curProd=prods[0];
-
-  renderProdTabs(prods);
-  activeSeries.clear();
-  renderChips();
-  renderAll();
+function initNav(){
+  const exs=getExchanges();
+  if(!exs.includes(curExchange))curExchange=exs[0];
+  renderExTabs();
 }
 
-// ── Product tabs ───────────────────────────────────────────────────
-function renderProdTabs(prods){
-  const el=document.getElementById('ptabs');
-  el.innerHTML=prods.map(p=>{
-    const c=prodColor(p),on=p===curProd;
-    return `<button class="prod-tab${on?' on':''}" data-p="${p}" style="${on?`background:${c}20;border-color:${c}55;color:${c}`:''}">
-      ${p}
-    </button>`;
-  }).join('');
-  el.querySelectorAll('.prod-tab').forEach(btn=>btn.addEventListener('click',()=>{
-    curProd=btn.dataset.p;activeSeries.clear();renderProdTabs(prods);renderChips();renderAll();
-  }));
+function renderExTabs(){
+  const exs=getExchanges();
+  const el=document.getElementById('ex-tabs');
+  el.innerHTML='';el.style.display='flex';el.style.gap='6px';
+  exs.forEach(ex=>{
+    const btn=document.createElement('button');
+    btn.className='ex-tab'+(ex===curExchange?' on':'');
+    btn.textContent=ex;
+    const c=EX_COLORS[ex]||'#4f9eff';
+    if(ex===curExchange)btn.style.cssText=`background:${c};border-color:${c};color:#fff`;
+    btn.addEventListener('click',()=>{curExchange=ex;renderExTabs();});
+    el.appendChild(btn);
+  });
+  const cats=getCategories(curExchange);
+  if(!cats.includes(curCategory))curCategory=cats[0];
+  renderCatTabs();
 }
 
-// ── Chips (all mode) ───────────────────────────────────────────────
+function renderCatTabs(){
+  const cats=getCategories(curExchange);
+  const el=document.getElementById('cat-tabs');
+  el.innerHTML='';
+  cats.forEach(cat=>{
+    const btn=document.createElement('button');
+    btn.className='cat-tab'+(cat===curCategory?' on':'');
+    const c=CAT_COLORS[cat]||'#4f9eff';
+    if(cat===curCategory)btn.style.cssText=`background:${c}22;border-color:${c}55;color:${c}`;
+    btn.textContent=cat;
+    btn.addEventListener('click',()=>{curCategory=cat;renderCatTabs();});
+    el.appendChild(btn);
+  });
+  const prods=getProds(curExchange,curCategory);
+  if(!prods.includes(curProd))curProd=prods[0]||'';
+  renderProdTabs();
+}
+
+function renderProdTabs(){
+  const prods=getProds(curExchange,curCategory);
+  const el=document.getElementById('prod-tabs');
+  el.innerHTML='';
+  prods.forEach(code=>{
+    const meta=PROD_META[code]||{name:code,color:'#888'};
+    const btn=document.createElement('button');
+    btn.className='prod-tab'+(code===curProd?' on':'');
+    if(code===curProd)btn.style.cssText=`background:${meta.color}22;border-color:${meta.color}55;color:${meta.color}`;
+    btn.innerHTML=`${meta.name||code} <span class="code">${code}</span>`;
+    btn.addEventListener('click',()=>{curProd=code;activeSeries.clear();renderProdTabs();renderChips();renderAll();});
+    el.appendChild(btn);
+  });
+  activeSeries.clear();renderChips();renderAll();
+}
+
+// ── Chips ──────────────────────────────────────────────────────────
 function renderChips(){
   const ch=document.getElementById('ch'),ib=document.getElementById('ib');
   if(viewMode==='dominant'){ch.style.display='none';ib.style.display='flex';return;}
   ib.style.display='none';ch.style.display='flex';
   const series=[...new Set(allData.filter(r=>r.product===curProd).map(r=>r.series))].sort();
   if(activeSeries.size===0)series.forEach(s=>activeSeries.add(s));
-  ch.innerHTML=series.map((s,i)=>{
-    const c=COLORS[i%COLORS.length],on=activeSeries.has(s);
-    return `<button class="chip${on?' on':''}" data-s="${s}" style="${on?`border-color:${c};color:${c};background:${c}18`:''}">${s}</button>`;
-  }).join('');
-  ch.querySelectorAll('.chip').forEach(btn=>btn.addEventListener('click',()=>{
-    const s=btn.dataset.s;activeSeries.has(s)?activeSeries.delete(s):activeSeries.add(s);
-    renderChips();renderAll();
-  }));
+  ch.innerHTML=series.map((s,i)=>{const c=COLORS[i%COLORS.length],on=activeSeries.has(s);return `<button class="chip${on?' on':''}" data-s="${s}" style="${on?`border-color:${c};color:${c};background:${c}18`:''}">${s}</button>`;}).join('');
+  ch.querySelectorAll('.chip').forEach(btn=>btn.addEventListener('click',()=>{const s=btn.dataset.s;activeSeries.has(s)?activeSeries.delete(s):activeSeries.add(s);renderChips();renderAll();}));
 }
 
 // ── Data helpers ───────────────────────────────────────────────────
 function getDominant(){
   const byDate={};
-  allData.filter(r=>r.product===curProd).forEach(r=>{
-    if(!byDate[r.date]||r.vol>byDate[r.date].vol)byDate[r.date]=r;
-  });
+  allData.filter(r=>r.product===curProd).forEach(r=>{if(!byDate[r.date]||r.vol>byDate[r.date].vol)byDate[r.date]=r;});
   return Object.values(byDate).sort((a,b)=>a.date.localeCompare(b.date));
 }
 function getFiltered(){return allData.filter(r=>r.product===curProd&&(activeSeries.size===0||activeSeries.has(r.series)));}
@@ -487,55 +474,34 @@ function renderChart(){
   if(!data.length){if(chart){chart.destroy();chart=null;}return;}
   if(chart){chart.destroy();chart=null;}
   const ctx=document.getElementById('cv').getContext('2d');
+  const meta=PROD_META[curProd]||{color:'#4f9eff',name:curProd};
   const scl={
     x:{ticks:{maxTicksLimit:10,maxRotation:45,color:'#7a8299',font:{size:11,family:'IBM Plex Mono'}},grid:{color:'rgba(255,255,255,.04)'},border:{color:'rgba(255,255,255,.07)'}},
     y:{ticks:{callback:v=>v.toFixed(1)+'%',color:'#7a8299',font:{size:11,family:'IBM Plex Mono'}},grid:{color:'rgba(255,255,255,.04)'},border:{color:'rgba(255,255,255,.07)'}}
   };
   const ttp={backgroundColor:'#1e2535',borderColor:'rgba(255,255,255,.1)',borderWidth:.5,titleFont:{family:'IBM Plex Mono',size:11},bodyFont:{family:'IBM Plex Mono',size:11}};
-  const pc=prodColor(curProd);
 
   if(viewMode==='dominant'){
     const dates=data.map(r=>r.date),ivs=data.map(r=>r.iv);
     const smap={};data.forEach(r=>smap[r.date]=r.series);
-    document.getElementById('cttl').textContent=curProd+'  主力合约隐含波动率（日度）';
-    document.getElementById('lg').innerHTML=`<span class="li"><span class="ld" style="background:${pc}"></span>主力合约 IV（按成交量选取）</span>`;
+    document.getElementById('cttl').textContent=`${meta.name}（${curProd}）主力合约隐含波动率`;
+    document.getElementById('lg').innerHTML=`<span class="li"><span class="ld" style="background:${meta.color}"></span>主力合约 IV（按成交量）</span>`;
     chart=new Chart(ctx,{
       type:chartType==='bar'?'bar':'line',
-      data:{labels:dates,datasets:[{
-        label:'主力合约 IV',data:ivs,
-        borderColor:pc,backgroundColor:chartType==='bar'?pc+'99':pc+'18',
-        borderWidth:chartType==='line'?2:0,
-        pointRadius:chartType==='line'?(dates.length>80?0:3):0,
-        pointHoverRadius:5,fill:chartType==='line',tension:0.3,spanGaps:true,
-      }]},
-      options:{
-        responsive:true,maintainAspectRatio:false,
-        interaction:{mode:'index',intersect:false},
-        plugins:{legend:{display:false},tooltip:{...ttp,callbacks:{
-          title:items=>`${items[0].label}  [${smap[items[0].label]||''}]`,
-          label:c=>` IV: ${c.parsed.y!==null?c.parsed.y.toFixed(2)+'%':'—'}`
-        }}},
-        scales:scl
-      }
+      data:{labels:dates,datasets:[{label:'主力IV',data:ivs,borderColor:meta.color,backgroundColor:chartType==='bar'?meta.color+'99':meta.color+'18',borderWidth:chartType==='line'?2:0,pointRadius:chartType==='line'?(dates.length>80?0:3):0,pointHoverRadius:5,fill:chartType==='line',tension:0.3,spanGaps:true}]},
+      options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{...ttp,callbacks:{title:items=>`${items[0].label}  [${smap[items[0].label]||''}]`,label:c=>` IV: ${c.parsed.y!==null?c.parsed.y.toFixed(2)+'%':'—'}`}}},scales:scl}
     });
   }else{
     const seriesList=[...new Set(data.map(r=>r.series))].sort();
     const dates=[...new Set(data.map(r=>r.date))].sort((a,b)=>a.localeCompare(b));
-    document.getElementById('cttl').textContent=curProd+'  隐含波动率 期限结构';
+    document.getElementById('cttl').textContent=`${meta.name}（${curProd}）隐含波动率`;
     const lg=document.getElementById('lg');
     const datasets=seriesList.map((s,i)=>{
       const c=COLORS[i%COLORS.length];
       lg.innerHTML+=`<span class="li"><span class="ld" style="background:${c}"></span>${s}</span>`;
-      return{label:s,data:dates.map(d=>{const r=data.find(x=>x.date===d&&x.series===s);return r?r.iv:null;}),
-        borderColor:c,backgroundColor:chartType==='bar'?c+'99':c+'18',
-        spanGaps:true,borderWidth:chartType==='line'?2:0,
-        pointRadius:chartType==='line'?(dates.length>80?0:3):0,
-        pointHoverRadius:5,fill:chartType==='line'&&seriesList.length===1,tension:0.3};
+      return{label:s,data:dates.map(d=>{const r=data.find(x=>x.date===d&&x.series===s);return r?r.iv:null;}),borderColor:c,backgroundColor:chartType==='bar'?c+'99':c+'18',spanGaps:true,borderWidth:chartType==='line'?2:0,pointRadius:chartType==='line'?(dates.length>80?0:3):0,pointHoverRadius:5,fill:false,tension:0.3};
     });
-    chart=new Chart(ctx,{type:chartType==='bar'?'bar':'line',data:{labels:dates,datasets},
-      options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-        plugins:{legend:{display:false},tooltip:{...ttp,callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y!==null?c.parsed.y.toFixed(2)+'%':'—'}`}}},
-        scales:scl}});
+    chart=new Chart(ctx,{type:chartType==='bar'?'bar':'line',data:{labels:dates,datasets},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{...ttp,callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y!==null?c.parsed.y.toFixed(2)+'%':'—'}`}}},scales:scl}});
   }
 }
 function renderAll(){renderMetrics();renderChart();}
@@ -550,107 +516,33 @@ document.getElementById('ttg').querySelectorAll('.tb').forEach(btn=>btn.addEvent
   btn.classList.add('on');chartType=btn.dataset.t;renderChart();
 }));
 
-// ── File input ─────────────────────────────────────────────────────
-document.getElementById('fi').addEventListener('change',e=>{
-  if(e.target.files.length)processFileList(e.target.files);
-  e.target.value='';
-});
-
-// ── Drag & drop ────────────────────────────────────────────────────
-const dz=document.getElementById('dz');
-dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag');});
-dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
-dz.addEventListener('drop',e=>{
-  e.preventDefault();dz.classList.remove('drag');
-  if(e.dataTransfer.files.length)processFileList(e.dataTransfer.files);
-});
-
-// ── GitHub 数据文件配置 ────────────────────────────────────────────
-// 修改为你的 GitHub 用户名和仓库名
-const GITHUB_USER = 'songxuming60-lang';
-const GITHUB_REPO = 'iv';
-const GITHUB_BRANCH = 'main';
-
-const DATA_FILES = [
-  { name: '铜期权',    path: 'data/copper_iv.xlsx' },
-  { name: '天然橡胶期权', path: 'data/rubber_iv.xlsx' },
-  { name: '黄金期权',   path: 'data/gold_iv.xlsx' },
-  { name: '铝期权',    path: 'data/aluminum_iv.xlsx' },
-  { name: '锌期权',    path: 'data/zinc_iv.xlsx' },
-  { name: '白银期权',   path: 'data/silver_iv.xlsx' },
-  { name: '铅期权',    path: 'data/lead_iv.xlsx' },
-  { name: '镍期权',    path: 'data/nickel_iv.xlsx' },
-  { name: '锡期权',    path: 'data/tin_iv.xlsx' },
-  { name: '燃料油期权',  path: 'data/fuel_iv.xlsx' },
-];
-
-async function autoLoadFromGitHub() {
-  const status = document.getElementById('auto-status');
-  status.style.display = 'block';
-  status.textContent = '正在加载数据…';
-
-  // 所有文件并行请求
-  const results = await Promise.allSettled(
-    DATA_FILES.map(async file => {
-      const url = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${file.path}`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(res.status);
-      const buf = await res.arrayBuffer();
-      const wb = XLSX.read(new Uint8Array(buf), { type: 'array', cellDates: false });
-      const rows = sheetToRows(wb.Sheets[wb.SheetNames[0]]);
-      return { name: file.name, rows };
-    })
-  );
-
-  let loaded = 0;
-  results.forEach(r => {
-    if (r.status === 'fulfilled') {
-      if (addFileData(r.value.name, r.value.rows)) loaded++;
-    }
-  });
-
-  if (loaded > 0) {
-    rebuildData();
-    renderFileList();
-    refreshApp();
-    status.textContent = `已加载 ${loaded} 个品种`;
-    setTimeout(() => { status.style.display = 'none'; }, 2000);
-  } else {
-    status.textContent = '自动加载失败，请手动上传';
-    status.style.color = 'var(--warn)';
-  }
-}
-
-// ── Restore from URL hash (#s=id → fetch /api/store) ─────────────
-window.addEventListener('load',async()=>{
-  const hash=location.hash;
-  if(hash.startsWith('#s=')){
-    const id=hash.slice(3);
-    if(id){
-      document.getElementById('no-data').innerHTML=`<p>正在加载共享数据…</p><small>ID: ${id}</small>`;
-      try{
-        const res=await fetch('/api/store?id='+id);
-        if(!res.ok)throw new Error('HTTP '+res.status);
-        const compressed=await res.text();
-        const decoded=dec(compressed);
-        if(!decoded)throw new Error('数据解压失败');
-        let data,meta;
-        if(Array.isArray(decoded)){data=decoded;meta=[];}
-        else if(decoded.data){data=decoded.data;meta=decoded.files||[];}
-        else throw new Error('数据格式不正确');
-        if(meta.length){const byFile={};data.forEach(r=>{const fid=r.fileId||'0';if(!byFile[fid])byFile[fid]=[];byFile[fid].push(r);});fileStore=meta.map(f=>({...f,data:byFile[f.id]||[]}));}
-        else{fileStore=[{id:'0',name:'共享数据',data,products:[...new Set(data.map(r=>r.product))]}];}
-        rebuildData();renderFileList();refreshApp();
-        document.getElementById('su').value=location.href;
-        document.getElementById('sb').style.display='flex';
-        document.getElementById('copy-btn').style.display='inline-flex';
-        return;
-      }catch(e){
-        document.getElementById('no-data').innerHTML=`<p style="color:#ff5c5c">加载失败</p><small>${e.message}</small>`;
-      }
+// ── Entry point ────────────────────────────────────────────────────
+window.addEventListener('load', async () => {
+  const hash = location.hash;
+  if (hash.startsWith('#s=')) {
+    const id = hash.slice(3);
+    try {
+      const res = await fetch('/api/store?id=' + id);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const decoded = dec(await res.text());
+      if (!decoded) throw new Error('解压失败');
+      allData = Array.isArray(decoded) ? decoded : decoded.data || [];
+      // 补充 exchange/category（旧数据可能没有）
+      allData.forEach(r => {
+        if (!r.exchange) r.exchange = '手动上传';
+        if (!r.category) r.category = '其他';
+      });
+      document.getElementById('loading-state').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      document.getElementById('ds').textContent = allData.length.toLocaleString() + ' 条记录';
+      document.getElementById('sb').style.display = 'flex';
+      document.getElementById('copy-btn').style.display = 'inline-flex';
+      initNav();
+      return;
+    } catch (e) {
+      document.getElementById('load-detail').textContent = '共享链接加载失败：' + e.message;
     }
   }
-  // 没有分享链接时，自动从 GitHub 加载数据
   autoLoadFromGitHub();
 });
 </script>

@@ -622,49 +622,33 @@ async function autoLoadFromGitHub() {
 // ── Restore from URL hash (#s=id → fetch /api/store) ─────────────
 window.addEventListener('load',async()=>{
   const hash=location.hash;
-  if(!hash.startsWith('#s='))return;
-  const id=hash.slice(3);
-  if(!id)return;
-
-  document.getElementById('no-data').innerHTML=`
-    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity=".3"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-    <p>正在加载共享数据…</p><small>ID: ${id}</small>`;
-
-  try{
-    const res=await fetch('/api/store?id='+id);
-    if(!res.ok)throw new Error('HTTP '+res.status);
-    const compressed=await res.text();
-    const decoded=dec(compressed);
-    if(!decoded)throw new Error('数据解压失败');
-
-    let data,meta;
-    if(Array.isArray(decoded)){data=decoded;meta=[];}
-    else if(decoded.data){data=decoded.data;meta=decoded.files||[];}
-    else throw new Error('数据格式不正确');
-
-    if(meta.length){
-      const byFile={};
-      data.forEach(r=>{const fid=r.fileId||'0';if(!byFile[fid])byFile[fid]=[];byFile[fid].push(r);});
-      fileStore=meta.map(f=>({...f,data:byFile[f.id]||[]}));
-    }else{
-      fileStore=[{id:'0',name:'共享数据',data,products:[...new Set(data.map(r=>r.product))]}];
+  if(hash.startsWith('#s=')){
+    const id=hash.slice(3);
+    if(id){
+      document.getElementById('no-data').innerHTML=`<p>正在加载共享数据…</p><small>ID: ${id}</small>`;
+      try{
+        const res=await fetch('/api/store?id='+id);
+        if(!res.ok)throw new Error('HTTP '+res.status);
+        const compressed=await res.text();
+        const decoded=dec(compressed);
+        if(!decoded)throw new Error('数据解压失败');
+        let data,meta;
+        if(Array.isArray(decoded)){data=decoded;meta=[];}
+        else if(decoded.data){data=decoded.data;meta=decoded.files||[];}
+        else throw new Error('数据格式不正确');
+        if(meta.length){const byFile={};data.forEach(r=>{const fid=r.fileId||'0';if(!byFile[fid])byFile[fid]=[];byFile[fid].push(r);});fileStore=meta.map(f=>({...f,data:byFile[f.id]||[]}));}
+        else{fileStore=[{id:'0',name:'共享数据',data,products:[...new Set(data.map(r=>r.product))]}];}
+        rebuildData();renderFileList();refreshApp();
+        document.getElementById('su').value=location.href;
+        document.getElementById('sb').style.display='flex';
+        document.getElementById('copy-btn').style.display='inline-flex';
+        return;
+      }catch(e){
+        document.getElementById('no-data').innerHTML=`<p style="color:#ff5c5c">加载失败</p><small>${e.message}</small>`;
+      }
     }
-
-    rebuildData();
-    renderFileList();
-    refreshApp();
-    document.getElementById('su').value=location.href;
-    document.getElementById('sb').style.display='flex';
-    document.getElementById('copy-btn').style.display='inline-flex';
-    document.getElementById('gen-btn').innerHTML='<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8l3 3 7-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>已生成';
-
-  }catch(e){
-    document.getElementById('no-data').innerHTML=`
-      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#ff5c5c" stroke-width="1"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 15.5v.5"/></svg>
-      <p style="color:#ff5c5c">加载失败</p><small>${e.message}</small>`;
   }
-
-  // Auto-load from GitHub if no hash data
+  // 没有分享链接时，自动从 GitHub 加载数据
   autoLoadFromGitHub();
 });
 </script>

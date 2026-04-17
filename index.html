@@ -225,16 +225,16 @@ const GITHUB_REPO='iv';
 const GITHUB_BRANCH='main';
 
 const DATA_FILES=[
-  {name:'铜期权',     code:'CU', path:'data/copper_iv.xlsx',   exchange:'上期所', category:'金属'},
-  {name:'铝期权',     code:'AL', path:'data/aluminum_iv.xlsx', exchange:'上期所', category:'金属'},
-  {name:'锌期权',     code:'ZN', path:'data/zinc_iv.xlsx',     exchange:'上期所', category:'金属'},
-  {name:'铅期权',     code:'PB', path:'data/lead_iv.xlsx',     exchange:'上期所', category:'金属'},
-  {name:'镍期权',     code:'NI', path:'data/nickel_iv.xlsx',   exchange:'上期所', category:'金属'},
-  {name:'锡期权',     code:'SN', path:'data/tin_iv.xlsx',      exchange:'上期所', category:'金属'},
-  {name:'黄金期权',   code:'AU', path:'data/gold_iv.xlsx',     exchange:'上期所', category:'金属'},
-  {name:'白银期权',   code:'AG', path:'data/silver_iv.xlsx',   exchange:'上期所', category:'金属'},
-  {name:'燃料油期权', code:'FU', path:'data/fuel_iv.xlsx',     exchange:'上期所', category:'能源化工'},
-  {name:'天然橡胶期权',code:'RU', path:'data/rubber_iv.xlsx',  exchange:'上期所', category:'能源化工'},
+  {name:'铜期权',     code:'CU', path:'data/copper_iv.csv',    exchange:'上期所', category:'金属'},
+  {name:'铝期权',     code:'AL', path:'data/aluminum_iv.csv',  exchange:'上期所', category:'金属'},
+  {name:'锌期权',     code:'ZN', path:'data/zinc_iv.csv',      exchange:'上期所', category:'金属'},
+  {name:'铅期权',     code:'PB', path:'data/lead_iv.csv',      exchange:'上期所', category:'金属'},
+  {name:'镍期权',     code:'NI', path:'data/nickel_iv.csv',    exchange:'上期所', category:'金属'},
+  {name:'锡期权',     code:'SN', path:'data/tin_iv.csv',       exchange:'上期所', category:'金属'},
+  {name:'黄金期权',   code:'AU', path:'data/gold_iv.csv',      exchange:'上期所', category:'金属'},
+  {name:'白银期权',   code:'AG', path:'data/silver_iv.csv',    exchange:'上期所', category:'金属'},
+  {name:'燃料油期权', code:'FU', path:'data/fuel_iv.csv',      exchange:'上期所', category:'能源化工'},
+  {name:'天然橡胶期权',code:'RU', path:'data/rubber_iv.csv',   exchange:'上期所', category:'能源化工'},
 ];
 
 // 产品元数据查找表 (code → {name, exchange, category, color})
@@ -298,9 +298,14 @@ async function autoLoadFromGitHub(){
       const url=`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${file.path}`;
       const res=await fetch(url);
       if(!res.ok)return null;
-      const buf=await res.arrayBuffer();
-      const wb=XLSX.read(new Uint8Array(buf),{type:'array',cellDates:false});
-      const rows=sheetToRows(wb.Sheets[wb.SheetNames[0]]);
+      let rows;
+      if(file.path.endsWith('.csv')){
+        rows=parseCSV(await res.text());
+      }else{
+        const buf=await res.arrayBuffer();
+        const wb=XLSX.read(new Uint8Array(buf),{type:'array',cellDates:false});
+        rows=sheetToRows(wb.Sheets[wb.SheetNames[0]]);
+      }
       return{file,rows};
     })
   );

@@ -2,7 +2,7 @@ name: 每日自动更新期权IV数据
 
 on:
   schedule:
-    - cron: '30 9 * * 1-5'
+    - cron: '30 1 * * 1-5'
   workflow_dispatch:
 
 jobs:

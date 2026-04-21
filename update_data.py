@@ -12,7 +12,7 @@ import os
 # ── 品种配置 ───────────────────────────────────────────────────────
 SYMBOLS = {
     "铜期权":     ("data/copper_iv.csv",    date(2018,  9, 21)),
-    "天然橡胶期权": ("data/rubber_iv.csv",    date(2019,  1, 28)),
+    "天胶期权": ("data/rubber_iv.csv",    date(2019,  1, 28)),
     "黄金期权":    ("data/gold_iv.csv",      date(2019, 12, 20)),
     "铝期权":     ("data/aluminum_iv.csv",  date(2020,  8, 10)),
     "锌期权":     ("data/zinc_iv.csv",      date(2020,  8, 10)),

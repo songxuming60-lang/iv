@@ -235,12 +235,17 @@ const DATA_FILES=[
   {name:'白银期权',   code:'AG', path:'data/silver_iv.csv',    exchange:'上期所', category:'金属'},
   {name:'燃料油期权', code:'FU', path:'data/fuel_iv.csv',      exchange:'上期所', category:'能源化工'},
   {name:'天然橡胶期权',code:'RU', path:'data/rubber_iv.csv',   exchange:'上期所', category:'能源化工'},
+  {name:'工业硅期权', code:'SI', path:'data/si_iv.csv',        exchange:'广期所', category:'新能源'},
+  {name:'碳酸锂期权', code:'LC', path:'data/lc_iv.csv',        exchange:'广期所', category:'新能源'},
+  {name:'多晶硅期权', code:'PS', path:'data/ps_iv.csv',        exchange:'广期所', category:'新能源'},
+  {name:'铂期权',     code:'PT', path:'data/pt_iv.csv',        exchange:'广期所', category:'贵金属'},
+  {name:'钯期权',     code:'PD', path:'data/pd_iv.csv',        exchange:'广期所', category:'贵金属'},
 ];
 
 // 产品元数据查找表 (code → {name, exchange, category, color})
 const PROD_META={};
-const CAT_COLORS={'金属':'#4f9eff','能源化工':'#3dd68c','农产品':'#f5a623'};
-const EX_COLORS={'上期所':'#4f9eff','大商所':'#3dd68c','郑商所':'#f5a623'};
+const CAT_COLORS={'金属':'#4f9eff','能源化工':'#3dd68c','农产品':'#f5a623','新能源':'#c77dff','贵金属':'#f5a623'};
+const EX_COLORS={'上期所':'#4f9eff','大商所':'#3dd68c','郑商所':'#f5a623','广期所':'#c77dff'};
 
 DATA_FILES.forEach((f,i)=>{
   PROD_META[f.code]={name:f.name.replace('期权',''),exchange:f.exchange,category:f.category,color:COLORS[i%COLORS.length]};

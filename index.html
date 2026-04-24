@@ -444,9 +444,48 @@ function inDateRange(date){
   if(dateTo && date > dateTo.replace(/-/g,'/')) return false;
   return true;
 }
+function getContractExpiry(series){
+  // 从合约系列名中提取到期年月，如 si2409 → 2024-09
+  const m=series.match(/([a-zA-Z]+)(\d{4})$/);
+  if(!m)return null;
+  const ym=m[2];
+  const year=2000+parseInt(ym.slice(0,2));
+  const month=parseInt(ym.slice(2,4));
+  return new Date(year,month-1,1); // 近似到期日（月初）
+}
 function getDominant(){
   const byDate={};
-  allData.filter(r=>r.product===curProd&&inDateRange(r.date)).forEach(r=>{if(!byDate[r.date]||r.vol>byDate[r.date].vol)byDate[r.date]=r;});
+  const curExchangeForProd=(()=>{
+    const f=DATA_FILES.find(f=>f.code===curProd);
+    return f?f.exchange:'';
+  })();
+
+  allData.filter(r=>r.product===curProd&&inDateRange(r.date)).forEach(r=>{
+    if(curExchangeForProd==='广期所'){
+      // 广期所：取离当天最近到期、且到期日距当天超过5天的合约
+      if(!byDate[r.date]){
+        byDate[r.date]=r;
+      } else {
+        const tradeDay=new Date(r.date);
+        const fiveDaysLater=new Date(tradeDay);
+        fiveDaysLater.setDate(fiveDaysLater.getDate()+5);
+        const expA=getContractExpiry(byDate[r.date].series);
+        const expB=getContractExpiry(r.series);
+        if(!expA){byDate[r.date]=r;return;}
+        if(!expB)return;
+        // 过滤掉到期日不足5天的合约
+        const aValid=expA>=fiveDaysLater;
+        const bValid=expB>=fiveDaysLater;
+        if(!aValid&&bValid){byDate[r.date]=r;return;}
+        if(aValid&&!bValid)return;
+        // 都有效时取到期日最近的
+        if(expB<expA)byDate[r.date]=r;
+      }
+    } else {
+      // 上期所：按成交量
+      if(!byDate[r.date]||r.vol>byDate[r.date].vol)byDate[r.date]=r;
+    }
+  });
   return Object.values(byDate).sort((a,b)=>a.date.localeCompare(b.date));
 }
 function getFiltered(){return allData.filter(r=>r.product===curProd&&inDateRange(r.date)&&(activeSeries.size===0||activeSeries.has(r.series)));}

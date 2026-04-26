@@ -121,6 +121,8 @@ main{max-width:1200px;margin:0 auto;padding:1.5rem}
 .rank-name{font-size:12px;font-weight:500;color:var(--text);text-align:center;margin-top:2px}
 .rank-iv{font-family:var(--mono);font-size:11px;color:var(--muted)}
 .rank-ex{font-size:10px;color:var(--muted);opacity:.5}
+.rank-card-extreme{border-color:rgba(255,92,92,.3);background:linear-gradient(135deg,rgba(255,92,92,.06),rgba(79,158,255,.06))}
+.rank-card-extreme:hover{border-color:rgba(255,92,92,.5)}
 
 @media(max-width:640px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}header{padding:0 1rem}main{padding:1rem}}
 </style>
@@ -717,19 +719,35 @@ function renderRanking(){
     const col=item.pct>=80?'#ff5c5c':item.pct>=50?'#f5a623':'#3dd68c';
     const badgeClass=i===0?'rank-badge top1':i===1?'rank-badge top2':i===2?'rank-badge top3':'rank-badge';
     const badgeText=i===0?'🥇 NO.1':i===1?'🥈 NO.2':i===2?'🥉 NO.3':`NO.${i+1}`;
+    const isExtreme=item.pct>=95;
+    // 彩虹渐变 id 需唯一
+    const gradId=`rg_${item.prod}`;
+    const circleStroke=isExtreme?`url(#${gradId})`:`${col}`;
+    const rainbowSvgDef=isExtreme?`
+      <defs>
+        <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"   stop-color="#ff5c5c"/>
+          <stop offset="25%"  stop-color="#f5a623"/>
+          <stop offset="50%"  stop-color="#3dd68c"/>
+          <stop offset="75%"  stop-color="#4f9eff"/>
+          <stop offset="100%" stop-color="#c77dff"/>
+        </linearGradient>
+      </defs>`:'';
+    const pctStyle=isExtreme?'background:linear-gradient(135deg,#ff5c5c,#f5a623,#3dd68c,#4f9eff,#c77dff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text':'';
     return `
-    <div class="rank-card" onclick="jumpToProd('${item.prod}','${item.exchange}')">
+    <div class="rank-card${isExtreme?' rank-card-extreme':''}" onclick="jumpToProd('${item.prod}','${item.exchange}')">
       <div class="${badgeClass}">${badgeText}</div>
       <div class="rank-circle-wrap">
         <svg viewBox="0 0 76 76">
+          ${rainbowSvgDef}
           <circle class="rank-circle-bg" cx="38" cy="38" r="${R}"/>
           <circle class="rank-circle-fg" cx="38" cy="38" r="${R}"
-            stroke="${col}"
+            stroke="${circleStroke}"
             stroke-dasharray="${C}"
             stroke-dashoffset="${offset}"/>
         </svg>
         <div class="rank-circle-text">
-          <span class="rank-circle-pct" style="color:${col}">${item.pct.toFixed(1)}%</span>
+          <span class="rank-circle-pct" style="${pctStyle}${isExtreme?'':';color:'+col}">${item.pct.toFixed(1)}%</span>
           <span class="rank-circle-label">分位数</span>
         </div>
       </div>

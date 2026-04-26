@@ -87,7 +87,7 @@ main{max-width:1200px;margin:0 auto;padding:1.5rem}
 
 /* Chart */
 .chart-card{background:var(--card);border:.5px solid var(--border);border-radius:12px;padding:1.25rem}
-.chart-ttl{font-size:13px;color:var(--muted);margin-bottom:1rem;font-family:var(--mono)}
+.chart-ttl{font-size:15px;font-weight:500;color:var(--text);margin-bottom:1rem;font-family:var(--mono);letter-spacing:.02em}
 .chart-wrap{position:relative;width:100%;height:340px}
 .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:14px}
 .li{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
@@ -100,6 +100,27 @@ main{max-width:1200px;margin:0 auto;padding:1.5rem}
 #loading-state p{font-size:14px}#loading-state small{font-size:12px}
 .spin{width:28px;height:28px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* IV Ranking */
+.rank-section{margin-top:2rem}
+.rank-title{font-size:15px;font-weight:500;color:var(--text);letter-spacing:.03em;margin-bottom:1.25rem;padding-bottom:10px;border-bottom:.5px solid var(--border)}
+.rank-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+.rank-card{background:var(--bg2);border:.5px solid var(--border);border-radius:14px;padding:18px 12px 14px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:all .18s;position:relative}
+.rank-card:hover{background:var(--bg3);border-color:var(--border2);transform:translateY(-2px)}
+.rank-badge{position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(--bg3);border:.5px solid var(--border2);border-radius:20px;padding:2px 10px;font-size:11px;font-weight:600;font-family:var(--mono);color:var(--muted);white-space:nowrap}
+.rank-badge.top1{background:#f5a62322;border-color:#f5a62366;color:#f5a623}
+.rank-badge.top2{background:#7a829922;border-color:#7a829966;color:#a0a8b8}
+.rank-badge.top3{background:#cd7f3222;border-color:#cd7f3266;color:#cd7f32}
+.rank-circle-wrap{position:relative;width:76px;height:76px;margin-top:10px}
+.rank-circle-wrap svg{width:76px;height:76px;transform:rotate(-90deg)}
+.rank-circle-bg{fill:none;stroke:var(--border2);stroke-width:6}
+.rank-circle-fg{fill:none;stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .6s}
+.rank-circle-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.rank-circle-pct{font-family:var(--mono);font-size:15px;font-weight:600;line-height:1}
+.rank-circle-label{font-size:9px;color:var(--muted);letter-spacing:.04em}
+.rank-name{font-size:12px;font-weight:500;color:var(--text);text-align:center;margin-top:2px}
+.rank-iv{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.rank-ex{font-size:10px;color:var(--muted);opacity:.5}
 
 @media(max-width:640px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}header{padding:0 1rem}main{padding:1rem}}
 </style>
@@ -210,6 +231,13 @@ main{max-width:1200px;margin:0 auto;padding:1.5rem}
         </div>
       </div>
       <div class="legend" id="lg"></div>
+    </div>
+  </div>
+  <!-- IV Ranking -->
+  <div class="rank-section" id="rank-section" style="display:none">
+    <div class="chart-card">
+      <div class="rank-title">全品种 IV 历史分位数排行（当日，前10）</div>
+      <div class="rank-grid" id="rank-grid"></div>
     </div>
   </div>
 </main>
@@ -332,6 +360,7 @@ async function autoLoadFromGitHub(){
     status.textContent=`已加载 ${loaded} 个品种`;
     setTimeout(()=>{status.style.display='none';},2000);
     initNav();
+    renderRanking();
   }else{
     detail.textContent='数据加载失败，请手动上传文件';
     document.querySelector('.spin').style.display='none';
@@ -360,6 +389,7 @@ document.getElementById('fi').addEventListener('change',e=>{
     document.getElementById('app').style.display='block';
     document.getElementById('ds').textContent=allData.length.toLocaleString()+' 条记录';
     initNav();
+    renderRanking();
   }
   e.target.value='';
 });
@@ -621,6 +651,108 @@ document.getElementById('date-to').addEventListener('change',e=>{
   document.querySelectorAll('.preset').forEach(b=>b.classList.remove('on'));
   renderAll();
 });
+
+// ── IV Ranking ────────────────────────────────────────────────────
+function renderRanking(){
+  if(!allData.length) return;
+
+  // 找所有品种最新一天的主力合约 IV
+  const products=[...new Set(allData.map(r=>r.product))];
+  const rankings=[];
+
+  products.forEach(prod=>{
+    const meta=PROD_META[prod]||{};
+    const rows=allData.filter(r=>r.product===prod);
+    if(!rows.length) return;
+
+    // 找最新日期
+    const latestDate=rows.map(r=>r.date).sort().pop();
+    const dayRows=rows.filter(r=>r.date===latestDate);
+
+    // 按交易所选主力合约
+    let dominant;
+    if(meta.exchange==='广期所'){
+      const tradeDay=new Date(latestDate);
+      const fiveDaysLater=new Date(tradeDay);
+      fiveDaysLater.setDate(fiveDaysLater.getDate()+5);
+      const valid=dayRows.filter(r=>{
+        const exp=getContractExpiry(r.series);
+        return exp&&exp>=fiveDaysLater;
+      }).sort((a,b)=>{
+        const ea=getContractExpiry(a.series),eb=getContractExpiry(b.series);
+        return ea-eb;
+      });
+      dominant=valid[0]||dayRows[0];
+    } else {
+      dominant=dayRows.reduce((a,b)=>a.vol>b.vol?a:b);
+    }
+    if(!dominant) return;
+
+    // 计算历史分位数（用全部历史数据中主力合约的IV）
+    const allIVs=rows.map(r=>r.iv).filter(v=>v!=null).sort((a,b)=>a-b);
+    if(!allIVs.length) return;
+    const pct=allIVs.filter(v=>v<=dominant.iv).length/allIVs.length*100;
+
+    rankings.push({
+      prod, pct,
+      name: meta.name||prod,
+      iv: dominant.iv,
+      exchange: meta.exchange||'',
+      color: meta.color||'#4f9eff',
+      date: latestDate,
+      series: dominant.series,
+    });
+  });
+
+  // 按分位数从大到小排序，取前10
+  rankings.sort((a,b)=>b.pct-a.pct);
+  const top10=rankings.slice(0,10);
+
+  if(!top10.length) return;
+  document.getElementById('rank-section').style.display='block';
+
+  const R=30, C=2*Math.PI*R, grid=document.getElementById('rank-grid');
+  grid.innerHTML=top10.map((item,i)=>{
+    const offset=C*(1-item.pct/100);
+    const col=item.pct>=80?'#ff5c5c':item.pct>=50?'#f5a623':'#3dd68c';
+    const badgeClass=i===0?'rank-badge top1':i===1?'rank-badge top2':i===2?'rank-badge top3':'rank-badge';
+    const badgeText=i===0?'🥇 NO.1':i===1?'🥈 NO.2':i===2?'🥉 NO.3':`NO.${i+1}`;
+    return `
+    <div class="rank-card" onclick="jumpToProd('${item.prod}','${item.exchange}')">
+      <div class="${badgeClass}">${badgeText}</div>
+      <div class="rank-circle-wrap">
+        <svg viewBox="0 0 76 76">
+          <circle class="rank-circle-bg" cx="38" cy="38" r="${R}"/>
+          <circle class="rank-circle-fg" cx="38" cy="38" r="${R}"
+            stroke="${col}"
+            stroke-dasharray="${C}"
+            stroke-dashoffset="${offset}"/>
+        </svg>
+        <div class="rank-circle-text">
+          <span class="rank-circle-pct" style="color:${col}">${item.pct.toFixed(1)}%</span>
+          <span class="rank-circle-label">分位数</span>
+        </div>
+      </div>
+      <div class="rank-name">${item.name}</div>
+      <div class="rank-iv">IV ${item.iv.toFixed(2)}%</div>
+      <div class="rank-ex">${item.exchange}</div>
+    </div>`;
+  }).join('');
+}
+
+function jumpToProd(prod, exchange){
+  // 切换到对应品种
+  curExchange=exchange;
+  renderExTabs();
+  // 找到品类
+  const f=DATA_FILES.find(f=>f.code===prod);
+  if(f){curCategory=f.category;renderCatTabs();}
+  curProd=prod;
+  activeSeries.clear();
+  renderProdTabs();
+  // 滚动到顶部
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 
 // ── Entry point ────────────────────────────────────────────────────
 window.addEventListener('load', async () => {
